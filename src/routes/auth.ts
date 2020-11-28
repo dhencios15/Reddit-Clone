@@ -7,6 +7,21 @@ import cookie from 'cookie';
 import { User } from '../entities/User';
 import auth from '../middlewares/auth';
 
+const setCookie = async (res: Response, user) => {
+  const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET);
+  res.set(
+    'Set-Cookie',
+    cookie.serialize('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 3600,
+      path: '/',
+    })
+  );
+  return res.json(user);
+};
+
 const register = async (req: Request, res: Response) => {
   const { email, username, password } = req.body;
   try {
@@ -23,7 +38,8 @@ const register = async (req: Request, res: Response) => {
     errors = await validate(user);
     if (errors.length > 0) return res.status(400).json({ errors });
     await user.save();
-    return res.json(user);
+
+    setCookie(res, user);
   } catch (error) {
     res.status(500).json({ error: 'Something went wrong!' });
   }
@@ -44,19 +60,7 @@ const login = async (req: Request, res: Response) => {
     if (!passwordMatches)
       return res.status(401).json({ error: 'Username or Password Incorrect' });
 
-    const token = jwt.sign({ username }, process.env.JWT_SECRET);
-    res.set(
-      'Set-Cookie',
-      cookie.serialize('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 3600,
-        path: '/',
-      })
-    );
-
-    return res.json(user);
+    setCookie(res, user);
   } catch (error) {
     res.status(500).json({ error: 'Something went wrong!' });
   }
