@@ -25,10 +25,12 @@
       "jsonwebtoken": "^8.5.1",
       "pg": "^8.4.0",
       "reflect-metadata": "^0.1.10",
+      "slugify": "^1.4.6",
       "typeorm": "0.2.29"
    },
    "scripts": {
       "start": "ts-node src/server.ts",
-      "dev": "nodemon --exec ts-node src/server.ts"
+      "dev": "nodemon --exec ts-node src/server.ts",
+      "typeorm": "ts-node ./node_modules/typeorm/cli.js"    
    }
 }

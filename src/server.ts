@@ -8,6 +8,8 @@ dotenv.config();
 
 import trim from './middlewares/trim';
 import authRoutes from './routes/auth';
+import postRoutes from './routes/posts';
+import subRoutes from './routes/subs';
 
 const PORT = process.env.PORT || 5000;
 
@@ -20,6 +22,8 @@ app.use(cookieParser());
 app.get('/', (_, res) => res.send('HELLO'));
 
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/posts', postRoutes);
+app.use('/api/v1/subs', subRoutes);
 
 app.listen(5000, async () => {
   console.log(`Server running ${process.env.NODE_ENV} on port ${PORT}`);
